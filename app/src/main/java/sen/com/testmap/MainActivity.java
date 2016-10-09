@@ -616,24 +616,24 @@ public class MainActivity extends AppCompatActivity implements RouteSearch.OnRou
     //因为使用的是高德地图，所以坐标需要转一下
     private void openBaiduMap(double startLat, double startLon, double targetLat, double targetLon, String describle) {
         try {
-
-            StringBuilder loc = new StringBuilder();
-            loc.append("intent://map/direction?origin=latlng:");
-            loc.append(AMapUtil.gaoDeToBaidu(startLon, startLat)[1]);
-            loc.append(",");
-            loc.append(AMapUtil.gaoDeToBaidu(startLon, startLat)[0]);
-            loc.append("|name:");
-            loc.append("我的位置");
-            loc.append("&destination=latlng:");
-            loc.append(AMapUtil.gaoDeToBaidu(targetLon, targetLat)[1]);
-            loc.append(",");
-            loc.append(AMapUtil.gaoDeToBaidu(targetLon, targetLat)[0]);
-            loc.append("|name:");
-            loc.append(describle);
-            loc.append("&mode=driving");
-            loc.append("&referer=Autohome|GasStation#Intent;scheme=bdapp;package=com.baidu.BaiduMap;end");
-            Intent intent = Intent.getIntent(loc.toString());
+//移动APP调起Android百度地图方式举例
+          Intent  intent = Intent.getIntent("intent://map/navi?location="+AMapUtil.gaoDeToBaidu(targetLon, targetLat)[1]+","+AMapUtil.gaoDeToBaidu(targetLon, targetLat)[0]+"&type=BLK&src=sen.com.testmap#Intent;scheme=bdapp;package=com.baidu.BaiduMap;end");
             startActivity(intent); //启动调用
+//            StringBuilder loc = new StringBuilder();
+//            loc.append("intent://map/direction?origin=latlng:");
+//            loc.append(AMapUtil.gaoDeToBaidu(startLon, startLat)[1]);
+//            loc.append(",");
+//            loc.append(AMapUtil.gaoDeToBaidu(startLon, startLat)[0]);
+//            loc.append("|name:");
+//            loc.append("我的位置");
+//            loc.append("&destination=latlng:");
+//            loc.append(AMapUtil.gaoDeToBaidu(targetLon, targetLat)[1]);
+//            loc.append(",");
+//            loc.append(AMapUtil.gaoDeToBaidu(targetLon, targetLat)[0]);
+//            loc.append("|name:");
+//            loc.append(describle);
+//            loc.append("&mode=driving");
+//            loc.append("&referer=Autohome|GasStation#Intent;scheme=bdapp;package=com.baidu.BaiduMap;end");
 
         } catch (Exception e) {
             e.printStackTrace();
