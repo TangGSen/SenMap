@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/customer_dialog_bg"
+    android:gravity="center"
+    android:orientation="vertical">
+
+
+    <TextView
+        android:id="@+id/tv_one_title"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:gravity="center"
+        android:text="请选择导航方式"
+        android:textColor="@color/font_h1"
+        android:textSize="16sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@color/font_h2" />
+
+
+    <LinearLayout
+        android:id="@+id/layout_gaode"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_gaode"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="高德地图"
+            android:textColor="@color/font_h2"
+            android:textSize="14sp" />
+
+
+        <TextView
+            android:id="@+id/tv_info_gaode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:background="@drawable/seletor_map_drawable_info"
+            android:gravity="center"
+            android:padding="2dp"
+            android:text="未安装"
+            android:textColor="@color/whilecs"
+            android:textSize="10sp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@color/font_h2" />
+
+    <LinearLayout
+        android:id="@+id/layout_baidu"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_baidu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="百度地图"
+            android:textColor="@color/font_h2"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tv_info_baidu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:background="@drawable/seletor_map_drawable_info"
+            android:gravity="center"
+            android:padding="2dp"
+            android:text="已安装"
+            android:textColor="@color/whilecs"
+            android:textSize="10sp" />
+    </LinearLayout>
+
+
+</LinearLayout>
