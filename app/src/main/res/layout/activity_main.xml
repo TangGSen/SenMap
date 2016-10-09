@@ -18,10 +18,11 @@
         android:id="@+id/map_address_info"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="56dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:layout_height="60dp"
         android:visibility="gone"
+        android:layout_centerHorizontal="true"
         android:layout_marginBottom="8dp"
         android:background="#fff"
         android:gravity="center"
@@ -64,6 +65,7 @@
         </LinearLayout>
 
         <TextView
+
             android:id="@+id/startNav"
             android:layout_width="58dp"
             android:layout_height="60dp"
