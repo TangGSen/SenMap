@@ -29,7 +29,6 @@ import com.amap.api.maps2d.model.LatLng;
 import com.amap.api.maps2d.model.Marker;
 import com.amap.api.maps2d.model.MarkerOptions;
 import com.amap.api.services.core.LatLonPoint;
-import com.amap.api.services.geocoder.GeocodeSearch;
 import com.amap.api.services.route.BusRouteResult;
 import com.amap.api.services.route.DrivePath;
 import com.amap.api.services.route.DriveRouteResult;
@@ -60,7 +59,6 @@ public class MainActivity extends AppCompatActivity implements RouteSearch.OnRou
     };
 
     private static final int PERMISSON_REQUESTCODE = 0;
-    private GeocodeSearch geocoderSearch;
     private MapView mapView;
     private AMap aMap;
     private String startFristAddress = "";
@@ -95,27 +93,8 @@ public class MainActivity extends AppCompatActivity implements RouteSearch.OnRou
         public void onLocationChanged(AMapLocation amapLocation) {
             if (amapLocation != null) {
                 if (amapLocation.getErrorCode() == 0) {
-//                    //可在其中解析amapLocation获取相应内容。
-//                    StringBuffer buffer = new StringBuffer();
-//                    buffer.append(amapLocation.getLocationType());//获取当前定位结果来源，如网络定位结果，详见定位类型表);
-//                    buffer.append(amapLocation.getLatitude());//获取纬度
-//                    buffer.append(amapLocation.getLongitude());//获取经度
-//                    buffer.append(amapLocation.getAccuracy());//获取精度信息
-//                    buffer.append(amapLocation.getAddress());//地址，如果option中设置isNeedAddress为false，则没有此结果，网络定位结果中会有地址信息，GPS定位不返回地址信息。
-//                    buffer.append(amapLocation.getCountry());//国家信息
-//                    buffer.append(amapLocation.getProvince());//省信息
-//                    buffer.append(amapLocation.getCity());//城市信息
-//                    buffer.append(amapLocation.getDistrict());//城区信息
-//                    buffer.append(amapLocation.getStreet());//街道信息
-//                    buffer.append(amapLocation.getStreetNum());//街道门牌号信息
-//                    buffer.append(amapLocation.getCityCode());//城市编码
-//                    buffer.append(amapLocation.getAdCode());//地区编码
-//                    buffer.append(amapLocation.getAoiName());//获取当前定位点的AOI信息
-//
-//                    Log.e("sen", buffer.toString());
                     startFristAddress = amapLocation.getAddress();
                     startSecondAddress = amapLocation.getAoiName();
-
                     // 设置当前地图显示为当前位置
                     startLat = amapLocation.getLatitude();
                     startLon = amapLocation.getLongitude();
@@ -259,12 +238,13 @@ public class MainActivity extends AppCompatActivity implements RouteSearch.OnRou
      */
     private void checkPermissions(String... permissions) {
         List<String> needRequestPermissonList = findDeniedPermissions(permissions);
-        if (null != needRequestPermissonList
-                && needRequestPermissonList.size() > 0) {
+        if (null != needRequestPermissonList && needRequestPermissonList.size() > 0) {
             ActivityCompat.requestPermissions(this,
                     needRequestPermissonList.toArray(
                             new String[needRequestPermissonList.size()]),
                     PERMISSON_REQUESTCODE);
+        }else{
+            init();
         }
     }
 
@@ -279,8 +259,7 @@ public class MainActivity extends AppCompatActivity implements RouteSearch.OnRou
     private List<String> findDeniedPermissions(String[] permissions) {
         List<String> needRequestPermissonList = new ArrayList<String>();
         for (String perm : permissions) {
-            if (ContextCompat.checkSelfPermission(this,
-                    perm) != PackageManager.PERMISSION_GRANTED
+            if (ContextCompat.checkSelfPermission(this, perm) != PackageManager.PERMISSION_GRANTED
                     || ActivityCompat.shouldShowRequestPermissionRationale(
                     this, perm)) {
                 needRequestPermissonList.add(perm);
@@ -307,12 +286,13 @@ public class MainActivity extends AppCompatActivity implements RouteSearch.OnRou
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String[] permissions, int[] paramArrayOfInt) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] paramArrayOfInt) {
         if (requestCode == PERMISSON_REQUESTCODE) {
             if (!verifyPermissions(paramArrayOfInt)) {
                 showMissingPermissionDialog();
                 isNeedCheck = false;
+            }else{
+                init();
             }
         }
     }
@@ -377,7 +357,7 @@ public class MainActivity extends AppCompatActivity implements RouteSearch.OnRou
         //设置定位回调监听
         mLocationClient.setLocationListener(mAMapLocationListener);
 
-        init();
+
 
 
     }
