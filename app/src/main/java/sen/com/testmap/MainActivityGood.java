@@ -47,7 +47,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements RouteSearch.OnRouteSearchListener, AMap.InfoWindowAdapter {
+public class MainActivityGood extends AppCompatActivity implements RouteSearch.OnRouteSearchListener, AMap.InfoWindowAdapter {
 
     /**
      * 需要进行检测的权限数组
@@ -66,12 +66,8 @@ public class MainActivity extends AppCompatActivity implements RouteSearch.OnRou
     private String targetFristAddress = "";
     private String targetSecondAddress = "";
 
-    private double targetLat=-1;
-    private double targetLon =-1;
-    private double startLat =-1;
-    private double startLon =-1;
-    private boolean isPlanRute ;
-    private boolean isLocationSecess ;
+    private double targetLat;
+    private double targetLon;
 
     //声明AMapLocationClientOption对象
     public AMapLocationClientOption mLocationOption = null;
@@ -88,7 +84,8 @@ public class MainActivity extends AppCompatActivity implements RouteSearch.OnRou
     public AMapLocationClient mLocationClient = null;
     //声明定位回调监听器
 
-
+    private double startLat;
+    private double startLon;
     //可以通过类implement方式实现AMapLocationListener接口，也可以通过创造接口类对象的方法实现
 //以下为后者的举例：
     AMapLocationListener mAMapLocationListener = new AMapLocationListener() {
@@ -110,12 +107,10 @@ public class MainActivity extends AppCompatActivity implements RouteSearch.OnRou
                     markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
                     aMap.addMarker(markerOptions);
 
-                    if (!isPlanRute && targetLat!=-1 && targetLon !=-1){
-                        isPlanRute =true;
-                        Log.e("sen","定位去执行");
-                        planningRoute();
-                    }
 
+                    //搜索目标地址编码
+                    targetSecondAddress = "北京市海淀区中关村当代商城7层";
+                    seachTarget(targetSecondAddress);
                 } else {
                     //定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。
                     Log.e("AmapError", "location Error, ErrCode:"
@@ -125,7 +120,6 @@ public class MainActivity extends AppCompatActivity implements RouteSearch.OnRou
             }
         }
     };
-
 
 
     //搜索地理位置
@@ -154,19 +148,13 @@ public class MainActivity extends AppCompatActivity implements RouteSearch.OnRou
                                 targetFristAddress = geocode.getString("formatted_address");
                                 targetLat = Double.parseDouble(split[1]);
                                 targetLon = Double.parseDouble(split[0]);
-                                //为了同时进行定位和请求获得终点目标地址，确保起点的也需要获取到
-                                if (!isPlanRute && startLon!=-1 && startLon !=-1){
-                                    isPlanRute =true ;
-                                    Log.e("sen","http");
-                                    planningRoute();
-                                }
-
+                                planningRoute(targetLat, targetLon);
                             } else {
-                                ToastUtil.show(MainActivity.this, "定位目标地址失败");
+                                ToastUtil.show(MainActivityGood.this, "定位目标地址失败");
                             }
                         }
                     } else {
-                        ToastUtil.show(MainActivity.this, "定位目标地址失败");
+                        ToastUtil.show(MainActivityGood.this, "定位目标地址失败");
                     }
 
 
@@ -187,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements RouteSearch.OnRou
 //                } else { // 其他错误
 //                    // ...
 //                }
-                ToastUtil.show(MainActivity.this, "网络异常,请返回重试");
+                ToastUtil.show(MainActivityGood.this, "网络异常,请返回重试");
 
             }
 
@@ -208,9 +196,7 @@ public class MainActivity extends AppCompatActivity implements RouteSearch.OnRou
     @Override
     protected void onResume() {
         super.onResume();
-        Log.e("sen","resume");
-        if (isNeedCheck ) {
-            Log.e("sen","已经检查过了");
+        if (isNeedCheck) {
             checkPermissions(needPermissions);
         }
 
@@ -258,17 +244,7 @@ public class MainActivity extends AppCompatActivity implements RouteSearch.OnRou
                             new String[needRequestPermissonList.size()]),
                     PERMISSON_REQUESTCODE);
         }else{
-            Log.e("sen","已经有了权限");
-           // init();
-            //启动定位
-            if (!isLocationSecess){
-                Log.e("sen","定位中");
-                isLocationSecess =true;
-                mLocationClient.startLocation();
-                //搜索目标地址编码
-                targetSecondAddress = "北京市海淀区中关村当代商城7层";
-                seachTarget(targetSecondAddress);
-            }
+            init();
         }
     }
 
@@ -316,18 +292,7 @@ public class MainActivity extends AppCompatActivity implements RouteSearch.OnRou
                 showMissingPermissionDialog();
                 isNeedCheck = false;
             }else{
-               // init();
-                Log.e("sen","赋予权限");
-//                开始定位终点和起点
-                if (!isLocationSecess){
-                    Log.e("sen","定位中");
-                    isLocationSecess =true;
-                    mLocationClient.startLocation();
-                    //搜索目标地址编码
-                    targetSecondAddress = "北京市海淀区中关村当代商城7层";
-                    seachTarget(targetSecondAddress);
-                }
-
+                init();
             }
         }
     }
@@ -347,7 +312,7 @@ public class MainActivity extends AppCompatActivity implements RouteSearch.OnRou
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                       // finish();
+                        finish();
                     }
                 });
 
@@ -355,7 +320,6 @@ public class MainActivity extends AppCompatActivity implements RouteSearch.OnRou
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        isNeedCheck =true;
                         startAppSettings();
                     }
                 });
@@ -392,7 +356,6 @@ public class MainActivity extends AppCompatActivity implements RouteSearch.OnRou
         mLocationClient = new AMapLocationClient(getApplicationContext());
         //设置定位回调监听
         mLocationClient.setLocationListener(mAMapLocationListener);
-        initLocation();
 
 
 
@@ -402,7 +365,7 @@ public class MainActivity extends AppCompatActivity implements RouteSearch.OnRou
     /**
      * * 初始化AMap对象
      */
-    private void initLocation() {
+    private void init() {
         if (aMap == null) {
             aMap = mapView.getMap();
         }
@@ -410,8 +373,6 @@ public class MainActivity extends AppCompatActivity implements RouteSearch.OnRou
         setUpMap();
 
     }
-
-
 
     private void setUpMap() {
         //初始化定位参数
@@ -430,7 +391,8 @@ public class MainActivity extends AppCompatActivity implements RouteSearch.OnRou
         mLocationOption.setOnceLocation(true);
         //给定位客户端对象设置定位参数
         mLocationClient.setLocationOption(mLocationOption);
-
+        //启动定位
+        mLocationClient.startLocation();
 
 //        aMap.getUiSettings().setMyLocationButtonEnabled(true);// 设置默认定位按钮是否显示
 //        aMap.setMyLocationEnabled(true);// 设置为true表示显示定位层并可触发定位，false表示隐藏定位层并不可触发定位，默认是false
@@ -442,8 +404,7 @@ public class MainActivity extends AppCompatActivity implements RouteSearch.OnRou
 
 
     //规划路线
-    private void planningRoute() {
-
+    private void planningRoute(double targetLat, double targetLon) {
         LatLonPoint startPoint = AMapUtil.convertToLatLonPoint(new LatLng(startLat, startLon));
         LatLonPoint targetPoint = AMapUtil.convertToLatLonPoint(new LatLng(targetLat, targetLon));
         routeSearch = new RouteSearch(this);
@@ -463,7 +424,6 @@ public class MainActivity extends AppCompatActivity implements RouteSearch.OnRou
     @Override
     public void onDriveRouteSearched(DriveRouteResult driveRouteResult, int i) {
         if (i == 1000) {
-            Log.e("sen","规划完毕");
             if (driveRouteResult != null && driveRouteResult.getPaths() != null && driveRouteResult.getPaths().size() > 0) {
                 aMap.clear();
                 DrivePath drivePath = driveRouteResult.getPaths().get(0);
@@ -596,7 +556,7 @@ public class MainActivity extends AppCompatActivity implements RouteSearch.OnRou
                 if (isInstallByread("com.autonavi.minimap")) {
                     openGaoDeMap(targetLat, targetLon, targetFristAddress);
                 } else {
-                    ToastUtil.show(MainActivity.this, "请先安装高德地图");
+                    ToastUtil.show(MainActivityGood.this, "请先安装高德地图");
                 }
             }
         });
@@ -608,7 +568,7 @@ public class MainActivity extends AppCompatActivity implements RouteSearch.OnRou
                 if (isInstallByread("com.baidu.BaiduMap")) {
                     openBaiduMap(startLat, startLon, targetLat, targetLon, targetSecondAddress);
                 } else {
-                    ToastUtil.show(MainActivity.this, "请先安装百度地图");
+                    ToastUtil.show(MainActivityGood.this, "请先安装百度地图");
                 }
             }
         });
